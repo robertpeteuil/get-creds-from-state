@@ -16,7 +16,7 @@ set -e
 #   '-k' param forces use of 'keybase'
 
 scriptname=$(basename "$0")
-scriptbuildnum="1.0.0"
+scriptbuildnum="1.0.1"
 scriptbuilddate="2019-04-06"
 
 displayVer() {
@@ -26,8 +26,8 @@ displayVer() {
 usage() {
   [[ "$1" ]] && echo -e "Retrieve credentials from TFE state file for specified user\n"
   echo -e "usage: ${scriptname} [-u USER] [-f FILE] [-k] [-g] [-h] [-v]"
-  echo -e "     -u VERSION\t: specify user/customer/partner name (default = current user)"
-  echo -e "     -f FILE\t\t: filename for downloaded TFE state file (default = 'statedata')"
+  echo -e "     -u USER\t: specify user/customer/partner name (default = current user)"
+  echo -e "     -f FILE\t: filename for downloaded TFE state file (default = 'statedata')"
   echo -e "     -k\t\t: force use of keybase to decrypt data"
   echo -e "     -g\t\t: force use of gpg to decrypt data"
   echo -e "     -n\t\t: don't decrypt data (includes -d)"
