@@ -10,14 +10,13 @@ set -e
 #     looks for credentials that match the logged in user's name
 #       '-u' parameter specify user/customer/partner name
 #
-# Decoding with PGP keys - uses either 'keybase' or 'gpg'
-#   Defaults to 'keybase' if installed
-#   '-g' param forces use of 'gpg'
-#   '-k' param forces use of 'keybase'
+# Decoding with PGP keys - auto uses either 'keybase' or 'gpg'
+#   Defaults to 'keybase' if both installed
+#   '-g' param forces use of 'gpg' if both installed
 
 scriptname=$(basename "$0")
-scriptbuildnum="1.0.1"
-scriptbuilddate="2019-04-06"
+scriptbuildnum="1.1.0"
+scriptbuilddate="2019-04-07"
 
 displayVer() {
   echo -e "${scriptname}  ver ${scriptbuildnum} - ${scriptbuilddate}"
@@ -25,22 +24,20 @@ displayVer() {
 
 usage() {
   [[ "$1" ]] && echo -e "Retrieve credentials from TFE state file for specified user\n"
-  echo -e "usage: ${scriptname} [-u USER] [-f FILE] [-k] [-g] [-h] [-v]"
+  echo -e "usage: ${scriptname} [-u USER] [-f FILE] [-g] [-n] [-d] [-h] [-v]"
   echo -e "     -u USER\t: specify user/customer/partner name (default = current user)"
   echo -e "     -f FILE\t: filename for downloaded TFE state file (default = 'statedata')"
-  echo -e "     -k\t\t: force use of keybase to decrypt data"
   echo -e "     -g\t\t: force use of gpg to decrypt data"
-  echo -e "     -n\t\t: don't decrypt data (includes -d)"
+  echo -e "     -n\t\t: no decryption of data (includes -d)"
   echo -e "     -d\t\t: display encrypted data"
   echo -e "     -h\t\t: help"
   echo -e "     -v\t\t: display ${scriptname} version"
 }
 
-while getopts ":u:f:kgdnhv" arg; do
+while getopts ":u:f:gdnhv" arg; do
   case "${arg}" in
     u)  SPECUSER=${OPTARG};;
     f)  SPECFILE=${OPTARG};;
-    k)  decrypttool="keybase";;
     g)  decrypttool="gpg";;
     d)  displayall=true;;
     n)  displayall=true; nodecrypt=true;;
@@ -56,28 +53,6 @@ OS=$(uname)
 USERNAME="${SPECUSER:-$USER}"
 RAWFILE="${SPECFILE:-statedata}"
 
-if [[ -z "$decrypttool" ]]; then
-  if keybase -h 2&> /dev/null; then
-    decrypttool="keybase"
-  elif gpg -h 2&> /dev/null; then
-    decrypttool="gpg"
-  else
-    echo "Error - neither keybase or gpg is installed"
-    exit 1
-  fi
-fi
-
-if [ "$OS" == "Darwin" ]; then
-  # check for coreutils base64 - it uses linux syntax
-  if base64 --version 2&> /dev/null; then
-    b64arg="-d"
-  else
-    b64arg="-D"
-  fi
-else
-  b64arg="-d"
-fi
-
 decode() {
   case "${decrypttool}" in
     keybase)
@@ -90,24 +65,48 @@ decode() {
   echo -n "$result"
 }
 
+parsedata() {
+  readdata=$(jq -r --arg sstring "$1" '.modules[0].outputs | .[$sstring] | .value' $RAWFILE)
+  echo -n "$readdata"
+}
+
 # PARSE VALUES FROM STATE DATA
-substring="${USERNAME}-accesskey"
-acckey=$(jq -r --arg sstring "$substring" '.modules[0].outputs | .[$sstring] | .value' $RAWFILE)
+acckey=$(parsedata "${USERNAME}-accesskey")
+enc_pass=$(parsedata "${USERNAME}-password")
+enc_secret=$(parsedata "${USERNAME}-secretkey")
 
-substring="${USERNAME}-password"
-enc_pass=$(jq -r --arg sstring "$substring" '.modules[0].outputs | .[$sstring] | .value' $RAWFILE)
-
-substring="${USERNAME}-secretkey"
-enc_secret=$(jq -r --arg sstring "$substring" '.modules[0].outputs | .[$sstring] | .value' $RAWFILE)
-
-# DISPLAY AND DECODE DATA
+# DISPLAY DATA
 echo -e "Datafile name:\t ${RAWFILE}"
 echo -e "Username:\t ${USERNAME}"
-
 echo -e "Access Key:\t ${acckey}"
 
-# DECRYPT unless in no-decrypt mode
+# DECRYPT AND DISPLAY (unless in no-decrypt mode)
 if [[ ! "$nodecrypt" ]]; then
+
+  # set decryption tool
+  if [[ -z "$decrypttool" ]]; then
+    if keybase -h 2&> /dev/null; then
+      decrypttool="keybase"
+    elif gpg -h 2&> /dev/null; then
+      decrypttool="gpg"
+    else
+      echo "Cannot decrypt - neither keybase nor gpg installed"
+      exit 1
+    fi
+  fi
+
+  # set base64 arg format
+  if [ "$OS" == "Darwin" ]; then
+    # check for coreutils base64 - uses linux syntax
+    if base64 --version 2&> /dev/null; then
+      b64arg="-d"
+    else
+      b64arg="-D"
+    fi
+  else
+    b64arg="-d"
+  fi
+
   if [[ "$enc_pass" != "null" ]]; then
     pass=$(decode "$enc_pass")
     echo -e "Password:\t ${pass}"
@@ -117,7 +116,7 @@ if [[ ! "$nodecrypt" ]]; then
   echo -e "Secret Key:\t ${secret}"
 fi
 
-# display encrypted data
+# DISPLAY ENCRYPTED DATA (if enabled)
 if [[ "$displayall" ]]; then
   echo -e "\nEncrypted Password"
   echo "$enc_pass"
