@@ -5,21 +5,30 @@ Parses a user / customer / partner credentials from the TFE state file & decodes
 - Works on Mac/Linux with either keybase & gpg
 - Works for general credentials and binary distribution credentials
 
+## Install
+
+Clone of download script:
+
+``` bash
+curl -sL https://raw.github.com/robertpeteuil/get-creds-from-state/master/getcreds.sh > getcreds.sh
+chmod +x getcreds.sh
+```
+
 ## Use
 
-- Download entire state file locally, copy to script dir and rename to `statedata`
+- Download state file locally, copy to script dir and rename to `statedata` (or similar)
+- Run script with `./getcreds.sh`
 - Defaults
-  - looks for a file named `statedate`
-    - use `-f` parameter to specify alternate file name
-  - looks for credentials that match the logged in user's name
-    - `-u` specifies user/customer/partner name
-- Decoding with PGP keys - uses either `keybase` or `gpg`
-  - Defaults to `keybase` if installed
-  - `-g` forces use of `gpg`
-  - `-k` forces use of `keybase`
+  - reads state data from file named `statedate`
+    - `-f` specifies alternate file
+  - finds credentials that match current user's name
+    - `-u` specifies alternate name
+- Decoding with PGP keys - auto uses either `keybase` or `gpg`
+  - Defaults to `keybase` if both installed
+  - `-g` forces use of `gpg` if both installed
 - Other Options:
-  - `-d` also display encypted data
-  - `-n` don't decrypt data (includes `-d`)
+  - `-d` display un-encypted data
+  - `-n` no decryption of data (includes `-d`)
 
 ## TODO
 
