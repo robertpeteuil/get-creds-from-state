@@ -1,6 +1,9 @@
 # Retrieve credentials from TFE state file for specified user
 
-Parses a user / customer / partner credentials from the TFE state file & decodes them.  Works on Mac/Linux with both Keybase & gpg
+Parses a user / customer / partner credentials from the TFE state file & decodes them
+
+- Works on Mac/Linux with either keybase & gpg
+- Works for general credentials and binary distribution credentials
 
 ## Use
 
