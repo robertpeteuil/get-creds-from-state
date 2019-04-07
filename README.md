@@ -26,4 +26,3 @@ Parses a user / customer / partner credentials from the TFE state file & decodes
 - Test output for values decrypted with `keybase` and remove entranious text if necessary
 - `gpg` sends the following text to stderr for each decryption, which is filtered out
   - gpg: encrypted with 4096-bit RSA key, ID 54D0A5FD449203BD, created 2014-01-27
-  - "Robert Peteuil <robert@peteuil.com>"
