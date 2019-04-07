@@ -15,7 +15,7 @@ set -e
 #   '-g' param forces use of 'gpg' if both installed
 
 scriptname=$(basename "$0")
-scriptbuildnum="1.1.0"
+scriptbuildnum="1.1.1"
 scriptbuilddate="2019-04-07"
 
 displayVer() {
@@ -29,7 +29,7 @@ usage() {
   echo -e "     -f FILE\t: filename for downloaded TFE state file (default = 'statedata')"
   echo -e "     -g\t\t: force use of gpg to decrypt data"
   echo -e "     -n\t\t: no decryption of data (includes -d)"
-  echo -e "     -d\t\t: display encrypted data"
+  echo -e "     -d\t\t: display un-encrypted data"
   echo -e "     -h\t\t: help"
   echo -e "     -v\t\t: display ${scriptname} version"
 }
