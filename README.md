@@ -33,7 +33,7 @@ chmod +x getcreds.sh
   - Defaults to `keybase` if both installed
   - `-g` forces use of `gpg` if both installed
 - Other Options:
-  - `-d` display encypted data
+  - `-d` display encrypted data
   - `-n` no decryption of data (includes `-d`)
 
 ## To Test
