@@ -7,7 +7,7 @@ Parses a user / customer / partner credentials from the TFE state file & decodes
 
 ## Install
 
-Clone of download script:
+Clone or download script:
 
 ``` bash
 curl -sL https://raw.github.com/robertpeteuil/get-creds-from-state/master/getcreds.sh > getcreds.sh
