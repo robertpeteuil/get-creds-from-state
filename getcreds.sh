@@ -5,7 +5,7 @@ set -e
 # Retrieve credentials from TFE state file for specified user
 #   Download entire state file locally and move to script dir
 #   Default
-#     looks for a file named 'statedate'
+#     looks for a file named 'statedata'
 #       use '-f' parameter to specify alternate file name
 #     looks for credentials that match the logged in user's name
 #       '-u' parameter specify user/customer/partner name
@@ -25,7 +25,7 @@ displayVer() {
 usage() {
   [[ "$1" ]] && echo -e "Retrieve credentials from TFE state file for specified user\n"
   echo -e "usage: ${scriptname} [-u USER] [-f FILE] [-g] [-n] [-d] [-h] [-v]"
-  echo -e "     -u USER\t: specify user/customer/partner name (default = current user)"
+  echo -e "     -u USER\t: specify user/customer/partner name (default = $USER)"
   echo -e "     -f FILE\t: filename for downloaded TFE state file (default = 'statedata')"
   echo -e "     -g\t\t: force use of gpg to decrypt data"
   echo -e "     -n\t\t: no decryption of data (includes -d)"
