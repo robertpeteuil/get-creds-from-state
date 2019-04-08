@@ -25,7 +25,7 @@ chmod +x getcreds.sh
 - Download state file locally, copy to script dir and rename to `statedata` (or similar)
 - Run script with `./getcreds.sh`
 - Defaults
-  - reads state data from file named `statedate`
+  - reads state data from file named `statedata`
     - `-f` specifies alternate file
   - finds credentials that match current user's name
     - `-u` specifies alternate name
